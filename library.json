@@ -1,12 +1,12 @@
 {
     "name": "tcp server",
     "version": "1.0.0",
-    "description": "A \"TCP Server\" with a memory and performance deterministic structure",
+    "description": "An ESPCONN \"TCP Server\" with a memory and performance deterministic structure",
     "keywords": "TCP, Deterministic",
     "repository":
     {
       "type": "git",
-      "url": "https://github.com/zeilsell-user1/ev-midget"
+      "url": "https://github.com/zeilsell-user1/espconn-tcp-server"
     },
     "authors":
     [
