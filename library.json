@@ -1,0 +1,26 @@
+{
+    "name": "tcp server",
+    "version": "1.0.0",
+    "description": "A \"TCP Server\" with a memory and performance deterministic structure",
+    "keywords": "TCP, Deterministic",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/zeilsell-user1/ev-midget"
+    },
+    "authors":
+    [
+      {
+        "name": "Richard George",
+        "email": "richard.john.george.3@gmail.com",
+        "url": "https://www.linkedin.com/in/richardjohngeorge"
+      }
+    ],
+    "license": "MIT",
+    "homepage": "https://www.georgeconsultants.com/",
+    "dependencies": {
+      
+    },
+    "frameworks": "*",
+    "platforms": "*"
+  }

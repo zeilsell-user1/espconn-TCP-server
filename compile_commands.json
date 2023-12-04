@@ -1,0 +1,14 @@
+[
+    {
+        "command": "C:/msys64/ucrt64/bin/g++.exe -o .pio/build/native/src/tcp_server.o -c -std=c++23 -DPLATFORMIO=60111 -DDOCTEST_CONFIG_SUPER_FAST_ASSERTS -DDOCTEST_CONFIG_COLORS_NONE -Iinclude -Isrc -I.pio/libdeps/native/doctest/doctest -I.pio/libdeps/native/doctest src/tcp_server.cpp",
+        "directory": "C:/Users/richa/source/ev-midget/esp01-projects/tcp server",
+        "file": "src/tcp_server.cpp",
+        "output": ".pio/build/native/src/tcp_server.o"
+    },
+    {
+        "command": "C:/msys64/ucrt64/bin/g++.exe -o .pio/build/native/src/tcp_session.o -c -std=c++23 -DPLATFORMIO=60111 -DDOCTEST_CONFIG_SUPER_FAST_ASSERTS -DDOCTEST_CONFIG_COLORS_NONE -Iinclude -Isrc -I.pio/libdeps/native/doctest/doctest -I.pio/libdeps/native/doctest src/tcp_session.cpp",
+        "directory": "C:/Users/richa/source/ev-midget/esp01-projects/tcp server",
+        "file": "src/tcp_session.cpp",
+        "output": ".pio/build/native/src/tcp_session.o"
+    }
+]
