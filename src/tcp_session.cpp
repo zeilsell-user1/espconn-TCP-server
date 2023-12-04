@@ -170,7 +170,13 @@ TcpSession::sendResult TcpSession::sendMessage(unsigned char *pData, unsigned sh
     }
     else if (result == ESPCONN_ARG)
     {
-        TCP_ERROR("serverConn cn't be found - send failed");
+        TCP_ERROR("serverConn can't be found - send failed");
+        espconn_abort(&serverConn_);
+        return FAILED_ABORTED;
+    }
+    else if (result == ESPCONN_MAXNUM)
+    {
+        TCP_ERROR("max pending sends reached - send failed");
         espconn_abort(&serverConn_);
         return FAILED_ABORTED;
     }

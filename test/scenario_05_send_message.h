@@ -44,11 +44,45 @@ SCENARIO("TCP Server can be started and all other callbacks can be registered wh
             connectCb_(&mockedEspconn);
             unsigned char testMessage[] = "This is a test message";
             testSession->sendMessage(testMessage, strlen((const char *)testMessage));
+            REQUIRE_EQ(espconnSendCalled, true);
 
             std::this_thread::sleep_for(std::chrono::seconds(2));
 
             sentCb_((espconn *)&testEspconn);
             REQUIRE_EQ(sentCbCalled, true);
+        }
+        WHEN("when a send is passed to the ESPCONN firmware and fails with an arg error")
+        {
+            REQUIRE_EQ(tcpServer.startTcpServer(port, connectedCb, &dummyObject), true);
+            setupTest();
+            espconnSendTestIndex = 1;
+            connectCb_(&mockedEspconn);
+            unsigned char testMessage[] = "This is a test message";
+            TcpSession::sendResult result = testSession->sendMessage(testMessage, strlen((const char *)testMessage));
+            REQUIRE_EQ(espconnSendCalled, true);
+            REQUIRE_EQ(espconnAbortTestCalled, true);
+        }
+        WHEN("when a send is passed to the ESPCONN firmware and fails with a mem error")
+        {
+            REQUIRE_EQ(tcpServer.startTcpServer(port, connectedCb, &dummyObject), true);
+            setupTest();
+            espconnSendTestIndex = 2;
+            connectCb_(&mockedEspconn);
+            unsigned char testMessage[] = "This is a test message";
+            TcpSession::sendResult result = testSession->sendMessage(testMessage, strlen((const char *)testMessage));
+            REQUIRE_EQ(espconnSendCalled, true);
+            REQUIRE_EQ(espconnAbortTestCalled, true);
+        }
+        WHEN("when a send is passed to the ESPCONN firmware and fails with an maxnum error")
+        {
+            REQUIRE_EQ(tcpServer.startTcpServer(port, connectedCb, &dummyObject), true);
+            setupTest();
+            espconnSendTestIndex = 3;
+            connectCb_(&mockedEspconn);
+            unsigned char testMessage[] = "This is a test message";
+            TcpSession::sendResult result = testSession->sendMessage(testMessage, strlen((const char *)testMessage));
+            REQUIRE_EQ(espconnSendCalled, true);
+            REQUIRE_EQ(espconnAbortTestCalled, true);
         }
         WHEN("clean up test")
         {
