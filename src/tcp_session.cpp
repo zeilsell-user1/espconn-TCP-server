@@ -51,15 +51,25 @@ void nullcallback3(void *obj, signed char err, TcpSession::TcpSessionPtr session
  ******************************************************************************
  */
 
-void localSessionDisconnectCb(void *arg)
+void localSessionDisconnectedCb(void *arg)
 {
+    TCP_INFO("localSessionDisconnectedCb called");
     struct espconn *conn = (struct espconn *)arg;
     const ip_addr_t ipAddress = TcpSession::convertIpAddress(conn->proto.tcp->remote_ip);
     TcpSession::SessionId sessionId = TcpSession::createUniqueIdentifier(ipAddress, conn->proto.tcp->remote_port);
 
     TcpServer &tcpServer = TcpServer::getInstance();
+    TCP_INFO("Number of sessions: %d", tcpServer.getSessionCount());
     TcpSession::TcpSessionPtr tcpSession = tcpServer.getSession(sessionId);
-    tcpSession->sessionDisconnected(conn);
+
+    if (tcpSession != nullptr)
+    {
+        tcpSession->sessionDisconnected(conn);
+    }
+    else
+    {
+        TCP_WARNING("Session not found");
+    }
 }
 
 void localSessionReconnectCb(void *arg, signed char err)
@@ -92,7 +102,7 @@ void localMessageSentCb(void *arg)
 
     TcpServer &tcpServer = TcpServer::getInstance();
     TcpSession::TcpSessionPtr tcpSession = tcpServer.getSession(sessionId);
-    
+
     tcpSession->sessionMessageSent(conn);
 }
 
@@ -107,12 +117,10 @@ TcpSession::TcpSession(ip_addr_t ipAddress, unsigned short port, espconn *conn)
       sessionDisconnectedCbListener_(nullptr),
       incomingMessageCbListener_(nullptr),
       messageSentCbListener_(nullptr),
-      sessionDeadCbListener_(nullptr),
       disconnectedCb_(nullCallback1),
       reconnectCb_(nullcallback3),
       incomingMessageCb_(nullcallback2),
-      messageSentCb_(nullCallback1),
-      deadCb_(nullCallback1)
+      messageSentCb_(nullCallback1)
 {
     ip4_addr_copy(sessionConfig_.remote_ip, ipAddress);
     sessionConfig_.remote_port = port;
@@ -137,10 +145,13 @@ bool TcpSession::isSessionValid()
 
 void TcpSession::disconnectSession()
 {
+    TCP_INFO("disconnecting session %d", sessionId_);
+
     if (espconn_disconnect(&serverConn_) != 0)
     {
         espconn_abort(&serverConn_);
     }
+    TCP_INFO("exiting disconnectSession for session %d", sessionId_);
 }
 
 TcpSession::sendResult TcpSession::sendMessage(unsigned char *pData, unsigned short len)
@@ -176,7 +187,9 @@ TcpSession::sendResult TcpSession::sendMessage(unsigned char *pData, unsigned sh
 
 bool TcpSession::registerSessionDisconnectedCb(void (*cb)(void *, TcpSessionPtr session), void *obj)
 {
-    if (espconn_regist_disconcb(&serverConn_, localSessionDisconnectCb) == 0)
+    TCP_INFO("TcpSession::registerSessionDisconnectedCb called");
+
+    if (espconn_regist_disconcb(&serverConn_, localSessionDisconnectedCb) == 0)
     {
         sessionDisconnectedCbListener_ = obj;
         disconnectedCb_ = cb;
@@ -242,18 +255,11 @@ bool TcpSession::registerMessageSentCb(void (*cb)(void *, TcpSessionPtr session)
     }
 }
 
-void TcpSession::registerSessionDeadCb(void (*cb)(void *obj, TcpSessionPtr session), void *obj)
-{
-    sessionDeadCbListener_ = obj;
-    deadCb_ = cb;
-}
-
 // the methods that handle the callbacks.
 
 void TcpSession::sessionDisconnected(espconn *conn)
 {
     disconnectedCb_(sessionDisconnectedCbListener_, shared_from_this());
-    deadCb_(sessionDeadCbListener_, shared_from_this()); // ATM assume dead follow disconnected immediately
 }
 
 void TcpSession::sessionReconnect(espconn *conn, signed char err)
@@ -266,7 +272,7 @@ void TcpSession::sessionIncomingMessage(espconn *conn, char *pdata, unsigned sho
     incomingMessageCb_(incomingMessageCbListener_, pdata, length, shared_from_this());
 }
 
-    int testvar = 1;
+int testvar = 1;
 void TcpSession::sessionMessageSent(espconn *conn)
 {
     try

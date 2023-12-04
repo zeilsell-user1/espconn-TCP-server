@@ -54,12 +54,6 @@ void espconnSessionConnectedCb(void *arg)
     tcpServer.sessionConnected(arg);
 }
 
-void sessionDeadCb(void *obj, TcpSession::TcpSessionPtr session)
-{
-    TcpServer &tcpServer = TcpServer::getInstance();
-    tcpServer.sessionDead(session);
-}
-
 /*******************************************************************************
  * Class Implemenation - private
  *******************************************************************************/
@@ -156,7 +150,7 @@ bool TcpServer::startTcpServer(unsigned short port,
 bool TcpServer::startTcpClient(ip_addr_t ipAddress,
                                unsigned short port,
                                void (*cb)(void *,
-                                          TcpSession::TcpSessionPtr),
+                                TcpSession::TcpSessionPtr),
                                void *ownerObj)
 {
 
@@ -281,9 +275,9 @@ void TcpServer::sessionConnected(void *arg)
     }
 }
 
-void TcpServer::sessionDead(TcpSession::TcpSessionPtr sessionPtr)
+void TcpServer::sessionDisconnected(TcpSession::SessionId sessionId)
 {
-    this->removeSession((sessionPtr->getSessionId()));
+    removeSession(sessionId);
 }
 
 TcpSession::TcpSessionPtr TcpServer::createTcpSession(ip_addr_t ipAddress, unsigned short port, espconn *conn)
@@ -295,9 +289,8 @@ TcpSession::TcpSessionPtr TcpServer::createTcpSession(ip_addr_t ipAddress, unsig
                                                           conn);
 
         TcpSession::SessionId sessionId = tcpSessionPtr->getSessionId();
-        tcpSessionPtr->registerSessionDeadCb(sessionDeadCb, (void *)this);
 
-        if (!this->addSession(sessionId, tcpSessionPtr))
+        if (!addSession(sessionId, tcpSessionPtr))
         {
             espconn_abort(conn); // couldn't add session so abort the TCP session
         }

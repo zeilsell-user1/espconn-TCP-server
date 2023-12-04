@@ -20,7 +20,7 @@ extern bool espconnRegistReconnectCbCalled;
 extern espconn_connect_callback connectCb_;
 extern espconn_sent_callback sentCb_;
 extern espconn_recv_callback recvCb_;
-extern espconn_connect_callback disconnectCb_;
+extern espconn_connect_callback disconnectedCb_;
 extern espconn_reconnect_callback reconnectCb_;
 
 #endif // __MOCK_ESPCONN_REGIST_CB_H__

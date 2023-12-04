@@ -64,6 +64,7 @@ public:
     bool stopTcpServer();
     bool stopTcpClient(ip_addr_t ipAddress);
     void sessionConnected(void *arg);
+    void sessionDisconnected(TcpSession::SessionId sessionId);
     std::size_t getSessionCount();
     TcpSession::TcpSessionPtr getSession(TcpSession::SessionId sessionId);
     void sessionDead(TcpSession::TcpSessionPtr);

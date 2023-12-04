@@ -1,7 +1,7 @@
 #include <functional>
 #include <thread>
-#include <doctest.h>
 #include <string.h>
+#include <doctest.h>
 
 #include <tcp_server.h>
 
@@ -37,18 +37,35 @@ SCENARIO("TCP Server can be started and all other callbacks can be registered wh
 
         espconnRegistConnectCbTestIndex = 0;
 
-        WHEN("when a send is passed to the ESPCONN firmware")
+        WHEN("when a disconnect message is passed to the ESPCONN firmware")
         {
             REQUIRE_EQ(tcpServer.startTcpServer(port, connectedCb, &dummyObject), true);
             setupTest();
+            espconnDisconnectTestIndex = 0;
             connectCb_(&mockedEspconn);
-            unsigned char testMessage[] = "This is a test message";
-            testSession->sendMessage(testMessage, strlen((const char *)testMessage));
-
+            REQUIRE_EQ(tcpServer.getSessionCount(), 1);
+            testSession->disconnectSession();
+            TCP_INFO("Sleep for 2 seconds");
             std::this_thread::sleep_for(std::chrono::seconds(2));
 
-            sentCb_((espconn *)&testEspconn);
-            REQUIRE_EQ(sentCbCalled, true);
+            TCP_INFO("confirm the disconnect from ESPCONN");
+            disconnectedCb_(&testEspconn);
+            TCP_INFO("confirm the session is removed");
+            REQUIRE_EQ(espconnDisconnectCalled, true);
+            REQUIRE_EQ(tcpServer.getSessionCount(), 0);
+        }
+        WHEN("when a disconnect message is passed to the ESPCONN firmware but gets an error")
+        {
+            REQUIRE_EQ(tcpServer.startTcpServer(port, connectedCb, &dummyObject), true);
+            setupTest();
+            espconnDisconnectTestIndex = 1; // fail the ESPCONN response
+            connectCb_(&mockedEspconn);
+            REQUIRE_EQ(tcpServer.getSessionCount(), 1);
+            testSession->disconnectSession();
+            REQUIRE_EQ(espconnDisconnectCalled, true);
+            REQUIRE_EQ(espconnAbortTestCalled, true);
+            tcpServer.sessionDisconnected(testSession->getSessionId());
+            REQUIRE_EQ(tcpServer.getSessionCount(), 0);
         }
         WHEN("clean up test")
         {

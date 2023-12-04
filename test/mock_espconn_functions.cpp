@@ -37,25 +37,21 @@ signed char espconn_accept(struct espconn *espconn)
 
     if (espconnAcceptTestIndex == 0) // a successful return
     {
-        INFO("Successful accept");
         REQUIRE_EQ(espconn->proto.tcp->local_port, TEST_PORT_1);
         return 0;
     }
     else if (espconnAcceptTestIndex == 1)
     {
-        FAIL("Returns a fail for out of memory");
         REQUIRE_EQ(espconn->proto.tcp->local_port, TEST_PORT_1);
         return ESPCONN_MEM;
     }
     else if (espconnAcceptTestIndex == 2)
     {
-        FAIL("Returns a fail for already connected");
         REQUIRE_EQ(espconn->proto.tcp->local_port, TEST_PORT_1);
         return ESPCONN_ISCONN;
     }
     else if (espconnAcceptTestIndex == 3)
     {
-        FAIL("Returns a fail for incorrect arguement");
         return ESPCONN_ARG;
     }
     else
@@ -75,7 +71,6 @@ signed char espconn_connect(struct espconn *espconn)
 
     if (espconnConnectTestIndex == 0)
     {
-        INFO("successful connection");
         ip_addr_t ipAddressPassed;
         IP4_ADDR(&ipAddressPassed, espconn->proto.tcp->remote_ip[0],
                  espconn->proto.tcp->remote_ip[1],
@@ -89,7 +84,6 @@ signed char espconn_connect(struct espconn *espconn)
     }
     else if (espconnConnectTestIndex == 1)
     {
-        FAIL("return a routing problem to the espconn connect");
         ip_addr_t ipAddressPassed;
         IP4_ADDR(&ipAddressPassed, espconn->proto.tcp->remote_ip[0],
                  espconn->proto.tcp->remote_ip[1],
@@ -103,7 +97,6 @@ signed char espconn_connect(struct espconn *espconn)
     }
     else if (espconnConnectTestIndex == 2)
     {
-        FAIL("return an out of memory to the espconn connect");
         ip_addr_t ipAddressPassed;
         IP4_ADDR(&ipAddressPassed, espconn->proto.tcp->remote_ip[0],
                  espconn->proto.tcp->remote_ip[1],
@@ -117,7 +110,6 @@ signed char espconn_connect(struct espconn *espconn)
     }
     else if (espconnConnectTestIndex == 3)
     {
-        FAIL("return an already connect to the espconn connect");
         ip_addr_t ipAddressPassed;
         IP4_ADDR(&ipAddressPassed, espconn->proto.tcp->remote_ip[0],
                  espconn->proto.tcp->remote_ip[1],
@@ -131,7 +123,6 @@ signed char espconn_connect(struct espconn *espconn)
     }
     else if (espconnConnectTestIndex == 4)
     {
-        FAIL("return a generic arg issue to espconn connect");
         ip_addr_t ipAddressPassed;
         IP4_ADDR(&ipAddressPassed, espconn->proto.tcp->remote_ip[0],
                  espconn->proto.tcp->remote_ip[1],
@@ -159,7 +150,6 @@ signed char espconn_send(struct espconn *espconn, unsigned char *psent, unsigned
 
     if (espconnSendTestIndex == 0)
     {
-        INFO("successful send");
         ip_addr_t ipAddressPassed;
         IP4_ADDR(&ipAddressPassed, espconn->proto.tcp->remote_ip[0],
                  espconn->proto.tcp->remote_ip[1],
@@ -176,17 +166,14 @@ signed char espconn_send(struct espconn *espconn, unsigned char *psent, unsigned
     }
     else if (espconnSendTestIndex == 1)
     {
-        FAIL("return a generic arg issue");
         return ESPCONN_ARG;
     }
     else if (espconnSendTestIndex == 2)
     {
-        FAIL("return an out-of-memory issue");
         return ESPCONN_MEM;
     }
     else if (espconnSendTestIndex == 3)
     {
-        FAIL("return a buffer is full issue");
         return ESPCONN_MAXNUM;
     }
     else
@@ -200,13 +187,12 @@ signed char espconn_send(struct espconn *espconn, unsigned char *psent, unsigned
 
 signed char espconn_disconnect(struct espconn *espconn)
 {
-    INFO("This mock is called when the TCP Server disconnects a session using ESPCONN library");
+    TCP_INFO("This mock is called when the TCP Server disconnects a session using ESPCONN library");
 
     espconnDisconnectCalled = true;
 
     if (espconnDisconnectTestIndex == 0)
     {
-        INFO("successful disconnection");
         ip_addr_t ipAddressPassed;
         IP4_ADDR(&ipAddressPassed, espconn->proto.tcp->remote_ip[0],
                  espconn->proto.tcp->remote_ip[1],
@@ -216,11 +202,11 @@ signed char espconn_disconnect(struct espconn *espconn)
         IP4_ADDR(&ipAddressTest, IP_1, IP_2, IP_3, IP_4);
         REQUIRE_EQ(ipAddressPassed.addr, ipAddressTest.addr);
         REQUIRE_EQ(espconn->proto.tcp->remote_port, TEST_PORT_1);
+        memcpy(&testEspconn, espconn, sizeof(testEspconn)); // save the espconn;
         return 0;
     }
     else if (espconnDisconnectTestIndex == 1)
     {
-        FAIL("return a generic arg issue to espconn disconnect");
         ip_addr_t ipAddressPassed;
         IP4_ADDR(&ipAddressPassed, espconn->proto.tcp->remote_ip[0],
                  espconn->proto.tcp->remote_ip[1],
@@ -249,7 +235,6 @@ signed char espconn_abort(struct espconn *espconn)
 
     if (espconnAbortTestIndex == 0)
     {
-        INFO("successful abortion");
         ip_addr_t ipAddressPassed;
         IP4_ADDR(&ipAddressPassed, espconn->proto.tcp->remote_ip[0],
                  espconn->proto.tcp->remote_ip[1],
@@ -263,7 +248,6 @@ signed char espconn_abort(struct espconn *espconn)
     }
     else if (espconnAbortTestIndex == 1)
     {
-        FAIL("return a generic arg issue to espconn abort");
         ip_addr_t ipAddressPassed;
         IP4_ADDR(&ipAddressPassed, espconn->proto.tcp->remote_ip[0],
                  espconn->proto.tcp->remote_ip[1],
@@ -277,7 +261,6 @@ signed char espconn_abort(struct espconn *espconn)
     }
     else if (espconnAbortTestIndex == 99)
     {
-        FAIL("Abort called unexpectedly");
         return ESPCONN_ARG;
     }
     else

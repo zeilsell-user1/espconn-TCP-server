@@ -23,7 +23,7 @@ bool espconnRegistReconnectCbCalled = false;
 espconn_connect_callback connectCb_;
 espconn_sent_callback sentCb_;
 espconn_recv_callback recvCb_;
-espconn_connect_callback disconnectCb_;
+espconn_connect_callback disconnectedCb_;
 espconn_reconnect_callback reconnectCb_;
 
 // the callback to the UUT
@@ -175,7 +175,7 @@ signed char espconn_regist_disconcb(struct espconn *espconn, espconn_connect_cal
         IP4_ADDR(&ipAddressTest, IP_1, IP_2, IP_3, IP_4);
         REQUIRE_EQ(ipAddressPassed.addr, ipAddressTest.addr);
         REQUIRE_EQ(espconn->proto.tcp->remote_port, TEST_PORT_1);
-        disconnectCb_ = disconCb;
+        disconnectedCb_ = disconCb;
     }
     else if (espconnRegistDisconnectCbTestIndex == 1)
     {

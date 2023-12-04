@@ -11,6 +11,13 @@
 #include "scenario_04_session_established.h"
 #include "scenario_05_send_message.h"
 #include "scenario_06_rcv_message.h"
+#include "scenario_07_disconnect.h"
+// #include "scenario_09_session_cleanup.h"
+// #include "scenario_10_session_lookup.h"
+// #include "scenario_11_multiple_sessions.h"
+// #include "scenario_12_high_concurrency.h"
+// #include "scenario_13_error_handling.h"
+// #include "scenario_14_unexpected_events.h"
 
 // Test cases implemented in this collection:
 //

@@ -97,7 +97,6 @@ public:
     bool registerSessionReconnectCb(void (*cb)(void *obj, signed char err, TcpSessionPtr session), void *obj);
     bool registerIncomingMessageCb(void (*cb)(void *obj, char *pData, unsigned short len, TcpSessionPtr session), void *obj);
     bool registerMessageSentCb(void (*cb)(void *obj, TcpSessionPtr session), void *obj);
-    void registerSessionDeadCb(void (*cb)(void *obj, TcpSessionPtr session), void *obj);
 
     // these are the callbacks that the session registers with the espconn firmware.
 
@@ -146,14 +145,12 @@ private:
     void (*reconnectCb_)(void *obj, signed char err, TcpSessionPtr session);
     void (*incomingMessageCb_)(void *obj, char *pdata, unsigned short len, TcpSessionPtr session);
     void (*messageSentCb_)(void *obj, TcpSessionPtr session);
-    void (*deadCb_)(void *obj, TcpSessionPtr session);
 
     // owner objects for each callback
     void *sessionDisconnectedCbListener_;
     void *sessionReconnectCbListener_;
     void *incomingMessageCbListener_;
     void *messageSentCbListener_;
-    void *sessionDeadCbListener_;
 };
 
 #endif // TCP_SESSION_H
