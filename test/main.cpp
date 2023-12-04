@@ -10,12 +10,9 @@
 #include "scenario_03_start_tcp_client.h"
 #include "scenario_04_session_established.h"
 #include "scenario_05_send_message.h"
+#include "scenario_06_rcv_message.h"
 
 // Test cases implemented in this collection:
-//
-// Instantiation of the server:
-// 1: Check if the server is correctly instantiated as a singleton and
-//    verify that the server starts successfully.
 //
 // Adding and Removing Sessions:
 // 2: Add a session and ensure it's present in the server's session list.

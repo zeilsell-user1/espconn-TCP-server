@@ -1,5 +1,6 @@
 
 #include <doctest.h>
+#include <string.h>
 
 #include "tcp_server.h"
 
@@ -24,6 +25,30 @@ void disconnectedCb(void *ownerObj, TcpSession::TcpSessionPtr session)
 
 void incomingMessageCb(void *ownerObj, char *pdata, unsigned short len, TcpSession::TcpSessionPtr session)
 {
+    try
+    {
+        TcpServer &tcpServer = TcpServer::getInstance();
+        TcpSession::TcpSessionPtr tmpSession = tcpServer.getSession(testSession->getSessionId());
+
+        REQUIRE_EQ(ownerObj, (void *)&dummyObject);
+        REQUIRE_EQ(session->getSessionId(), testSession->getSessionId());
+        REQUIRE_EQ(tcpServer.getSessionCount(), 1);
+        REQUIRE_EQ(tmpSession->getSessionId(), session->getSessionId());
+        REQUIRE_EQ(tmpSession->isSessionValid(), true);
+        REQUIRE_EQ(strcmp((const char *)pdata, "This is a test message"), 0);
+        REQUIRE_EQ(len, strlen("This is a test message"));
+        sentCbCalled = true;
+    }
+    catch (const std::exception &e)
+    {
+        // Catch any standard C++ exceptions
+        TCP_ERROR("Exception in sentCb: %s", e.what());
+    }
+    catch (...)
+    {
+        // Catch any other unexpected exceptions
+        TCP_ERROR("Unknown exception in sentCb");
+    }
     receivedCbCalled = true;
 };
 
@@ -31,15 +56,15 @@ void sentCb(void *ownerObj, TcpSession::TcpSessionPtr session)
 {
     try
     {
+        TcpServer &tcpServer = TcpServer::getInstance();
+        TcpSession::TcpSessionPtr tmpSession = tcpServer.getSession(testSession->getSessionId());
+
         REQUIRE_EQ(ownerObj, (void *)&dummyObject);
         REQUIRE_EQ(session->getSessionId(), testSession->getSessionId());
-        sentCbCalled = true;
-        
-        TcpServer &tcpServer = TcpServer::getInstance();
         REQUIRE_EQ(tcpServer.getSessionCount(), 1);
-        TcpSession::TcpSessionPtr tmpSession = tcpServer.getSession(testSession->getSessionId());
         REQUIRE_EQ(tmpSession->getSessionId(), session->getSessionId());
         REQUIRE_EQ(tmpSession->isSessionValid(), true);
+
         sentCbCalled = true;
     }
     catch (const std::exception &e)

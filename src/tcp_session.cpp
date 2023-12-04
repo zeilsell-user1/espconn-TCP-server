@@ -252,18 +252,18 @@ void TcpSession::registerSessionDeadCb(void (*cb)(void *obj, TcpSessionPtr sessi
 
 void TcpSession::sessionDisconnected(espconn *conn)
 {
-    disconnectedCb_(sessionDisconnectedCbListener_, (TcpSessionPtr)this);
-    deadCb_(sessionDeadCbListener_, (TcpSessionPtr)this); // ATM assume dead follow disconnected immediately
+    disconnectedCb_(sessionDisconnectedCbListener_, shared_from_this());
+    deadCb_(sessionDeadCbListener_, shared_from_this()); // ATM assume dead follow disconnected immediately
 }
 
 void TcpSession::sessionReconnect(espconn *conn, signed char err)
 {
-    reconnectCb_(sessionDisconnectedCbListener_, err, (TcpSessionPtr)this);
+    reconnectCb_(sessionDisconnectedCbListener_, err, shared_from_this());
 }
 
 void TcpSession::sessionIncomingMessage(espconn *conn, char *pdata, unsigned short length)
 {
-    incomingMessageCb_(incomingMessageCbListener_, pdata, length, (TcpSessionPtr)this);
+    incomingMessageCb_(incomingMessageCbListener_, pdata, length, shared_from_this());
 }
 
     int testvar = 1;
